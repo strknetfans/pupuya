@@ -1,0 +1,13 @@
+@import '../../styles/variables.less';
+
+.home-page {
+  min-height: 100vh;
+  background: @background-color;
+  position: relative;
+  padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); // 为TabBar留出空间，包含安全区域
+}
+
+// H5特定样式
+.platform-h5 {
+  @import '../../styles/h5-override.less';
+}

@@ -1,0 +1,130 @@
+@import '../../../../styles/variables.less';
+
+.follow-management {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: @background-color;
+
+  &__navbar {
+    border-bottom: 1px solid @border-color;
+  }
+
+  &__tabs {
+    flex: 1;
+    
+    .nut-tabs__content {
+      height: calc(100vh - 150px);
+      overflow: hidden;
+    }
+    
+    .nut-tabpane {
+      height: 100%;
+    }
+  }
+
+  &__search {
+    padding: 16px;
+    background: @background-color-white;
+    border-bottom: 1px solid @border-color;
+  }
+
+  &__searchbar {
+    width: 100%;
+  }
+
+  &__content {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  &__loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 120px 32px;
+    color: @text-color-light;
+    font-size: 28px;
+  }
+
+  &__list {
+    padding: 0 32px;
+  }
+
+  &__load-more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 40px;
+    font-size: 28px;
+    color: @text-color-light;
+    cursor: pointer;
+
+    &:active {
+      opacity: 0.6;
+    }
+  }
+
+  // H5 平台适配
+  .platform-h5 & {
+    &__header {
+      padding: 16px;
+    }
+
+    &__title {
+      font-size: 18px;
+    }
+
+    &__close {
+      width: 30px;
+      height: 30px;
+      font-size: 24px;
+    }
+
+    &__tab {
+      padding: 12px 0;
+      font-size: 14px;
+
+      &--active::after {
+        width: 30px;
+        height: 2px;
+      }
+    }
+
+    &__search {
+      padding: 12px 16px;
+      gap: 8px;
+    }
+
+    &__search-input {
+      height: 36px;
+      padding: 0 12px;
+      border-radius: 18px;
+      font-size: 14px;
+    }
+
+    &__search-btn {
+      height: 36px;
+      padding: 0 16px;
+      border-radius: 18px;
+    }
+
+    &__loading {
+      padding: 60px 16px;
+      font-size: 14px;
+    }
+
+    &__list {
+      padding: 0 16px;
+    }
+
+    &__load-more {
+      padding: 20px;
+      font-size: 14px;
+    }
+  }
+}

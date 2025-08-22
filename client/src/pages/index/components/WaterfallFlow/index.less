@@ -1,0 +1,164 @@
+@import '../../../../styles/variables.less';
+
+.waterfall-flow {
+  padding: 20px 20px 120px;
+  background: @background-color;
+
+  &__container {
+    display: flex;
+    gap: 20px;
+  }
+
+  &__column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  &__loading {
+    text-align: center;
+    padding: 40px 0;
+    color: @text-color-light;
+    font-size: 28px;
+  }
+
+  // H5 平台适配
+  .platform-h5 & {
+    padding: 10px 10px 60px;
+
+    &__follow-management {
+      margin-bottom: 16px;
+    }
+
+    &__follow-btn {
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 25px;
+    }
+
+    &__follow-btn-icon {
+      font-size: 16px;
+    }
+
+    &__follow-btn-text {
+      font-size: 14px;
+    }
+
+    &__container {
+      gap: 10px;
+    }
+
+    &__column {
+      gap: 10px;
+    }
+
+    &__loading {
+      padding: 20px 0;
+      font-size: 14px;
+    }
+  }
+}
+
+.waterfall-card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: @box-shadow-md;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &__image-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  &__image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    display: block;
+  }
+
+  &__content {
+    padding: 24px;
+  }
+
+  &__title {
+    font-size: 32px;
+    font-weight: 600;
+    color: @text-color;
+    line-height: 1.4;
+    margin-bottom: 12px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &__description {
+    font-size: 28px;
+    color: @text-color-light;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  &__username {
+    font-size: 26px;
+    color: @text-color-light;
+    font-weight: 500;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 120px;
+  }
+
+  &__stats {
+    display: flex;
+    gap: 20px;
+  }
+
+  &__stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__stat-icon {
+    font-size: 24px;
+  }
+
+  &__stat-count {
+    font-size: 24px;
+    color: @text-color-lighter;
+  }
+}

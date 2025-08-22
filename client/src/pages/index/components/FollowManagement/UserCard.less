@@ -1,0 +1,134 @@
+@import '../../../../styles/variables.less';
+
+.user-card {
+  margin-bottom: 0;
+  
+  .nut-cell__title {
+    padding: 0;
+  }
+
+  &__main {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    width: 100%;
+  }
+
+  &__avatar {
+    flex-shrink: 0;
+  }
+
+  &__info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  &__name {
+    font-size: 16px;
+    font-weight: 500;
+    color: @text-color;
+    .text-ellipsis();
+  }
+
+  &__following-tag {
+    flex-shrink: 0;
+  }
+
+  &__bio {
+    font-size: 14px;
+    color: @text-color-light;
+    line-height: 1.4;
+    margin-bottom: 8px;
+    .text-multiline-ellipsis(2);
+  }
+
+  &__stats {
+    display: flex;
+    gap: 16px;
+  }
+
+  &__stat {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: @text-color-lighter;
+  }
+
+  &__stat-text {
+    font-size: 12px;
+  }
+
+  &__follow-btn {
+    flex-shrink: 0;
+    min-width: 80px;
+    
+    .nut-icon {
+      margin-right: 4px;
+    }
+  }
+
+  // H5 平台适配
+  .platform-h5 & {
+    padding: 12px 0;
+
+    &__main {
+      gap: 12px;
+    }
+
+    &__avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 24px;
+    }
+
+    &__name {
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    &__bio {
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    &__stats {
+      gap: 12px;
+    }
+
+    &__stat {
+      font-size: 12px;
+    }
+
+    &__follow-btn {
+      width: 60px;
+      height: 32px;
+      border-radius: 16px;
+      font-size: 12px;
+    }
+  }
+}
+
+// 文本溢出样式
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.text-multiline-ellipsis(@lines: 2) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: @lines;
+  overflow: hidden;
+  word-break: break-word;
+  line-height: 1.4;
+}

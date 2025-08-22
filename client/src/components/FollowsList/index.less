@@ -1,0 +1,546 @@
+@import '../../styles/variables.less';
+
+.follows-list {
+  &__container {
+    display: flex;
+    align-items: center;
+    padding: @spacing-lg 0;
+    gap: @spacing-lg;
+    overflow-x: auto;
+    
+    // 隐藏滚动条
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  &__add-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 120px;
+    cursor: pointer;
+    transition: transform @duration-base;
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+
+  &__add-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 2px dashed @primary-color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: @font-size-xxl;
+    color: @primary-color;
+    background: fade(@primary-color, 8%);
+    margin-bottom: @spacing-sm;
+  }
+
+  &__add-text {
+    font-size: @font-size-sm;
+    color: @text-color-light;
+  }
+
+  &__user {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 120px;
+    position: relative;
+    cursor: pointer;
+    transition: transform @duration-base;
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    &--delete-mode {
+      animation: shake 0.3s ease-in-out;
+    }
+  }
+
+  &__user-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: @spacing-sm;
+    border: 3px solid @background-color-white;
+    box-shadow: @box-shadow-sm;
+  }
+
+  &__user-name {
+    font-size: @font-size-sm;
+    color: @text-color;
+    text-align: center;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__delete-btn {
+    position: absolute;
+    top: -8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #ff4757;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: @box-shadow-md;
+    animation: popIn 0.2s ease-out;
+    cursor: pointer;
+    z-index: 10;
+    
+    &:active {
+      transform: scale(0.9);
+    }
+  }
+
+  &__delete-icon {
+    color: @background-color-white;
+    font-size: @font-size-lg;
+    font-weight: bold;
+  }
+
+  &__loading,
+  &__empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: @spacing-xl;
+    color: @text-color-light;
+  }
+
+  &__empty-text {
+    font-size: @font-size-sm;
+    color: @text-color-lighter;
+  }
+
+  // 弹窗遮罩层
+  &__modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: @spacing-xl;
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  // 搜索弹窗样式
+  &__search-popup {
+    width: 90vw;
+    max-width: 400px;
+    height: 80vh;
+    max-height: 600px;
+    display: flex;
+    flex-direction: column;
+    background: @background-color-white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    position: relative;
+    animation: popInScale 0.3s ease-out;
+  }
+
+  &__search-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: @spacing-lg;
+    border-bottom: 1px solid @border-color;
+  }
+
+  &__search-title {
+    font-size: @font-size-lg;
+    font-weight: 600;
+    color: @text-color;
+  }
+
+  &__search-close {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: @background-color;
+    transition: all @duration-base;
+
+    &:active {
+      transform: scale(0.9);
+      background: darken(@background-color, 5%);
+    }
+  }
+
+  &__search-close-icon {
+    font-size: @font-size-xl;
+    color: @text-color-light;
+    font-weight: bold;
+  }
+
+  &__search-input-container {
+    padding: @spacing-lg;
+    border-bottom: 1px solid @border-color;
+  }
+
+  &__search-input {
+    width: 100%;
+    padding: @spacing-md @spacing-lg;
+    border: 1px solid @border-color;
+    border-radius: @border-radius-lg;
+    font-size: @font-size-md;
+    background: @background-color;
+  }
+
+  &__search-results {
+    flex: 1;
+    overflow-y: auto;
+    padding: @spacing-lg;
+  }
+
+  &__search-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: @spacing-xxl;
+    gap: @spacing-md;
+    color: @text-color-light;
+  }
+
+  &__search-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: @spacing-xxl;
+  }
+
+  &__search-hint-text {
+    font-size: @font-size-sm;
+    color: @text-color-lighter;
+  }
+
+  &__search-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: @spacing-xxl;
+    gap: @spacing-md;
+  }
+
+  &__search-empty-icon {
+    font-size: 64px;
+    opacity: 0.3;
+  }
+
+  &__search-empty-text {
+    font-size: @font-size-sm;
+    color: @text-color-lighter;
+    text-align: center;
+  }
+
+  &__search-result {
+    display: flex;
+    align-items: center;
+    padding: @spacing-lg;
+    border-radius: @border-radius-lg;
+    margin-bottom: @spacing-md;
+    cursor: pointer;
+    transition: all @duration-base;
+    border: 1px solid transparent;
+
+    &:hover {
+      background: @background-color;
+      border-color: @border-color;
+    }
+
+    &:active {
+      transform: scale(0.98);
+      background: darken(@background-color, 2%);
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__search-result-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-right: @spacing-lg;
+    flex-shrink: 0;
+  }
+
+  &__search-result-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__search-result-name {
+    font-size: @font-size-md;
+    font-weight: 500;
+    color: @text-color;
+    margin-bottom: @spacing-xs;
+    display: block;
+  }
+
+  &__search-result-bio {
+    font-size: @font-size-sm;
+    color: @text-color-light;
+    line-height: 1.4;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__search-result-action {
+    flex-shrink: 0;
+    margin-left: @spacing-md;
+  }
+
+  &__follow-btn {
+    padding: @spacing-sm @spacing-lg;
+    border-radius: 20px;
+    font-size: @font-size-sm;
+    font-weight: 500;
+    text-align: center;
+    min-width: 80px;
+    background: @primary-color;
+    color: @background-color-white;
+    transition: all @duration-base;
+    border: 1px solid @primary-color;
+    cursor: pointer;
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    &--following {
+      background: @background-color;
+      color: @text-color-light;
+      border-color: @border-color;
+    }
+  }
+}
+
+// 摇摆动画
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px) rotate(-1deg); }
+  75% { transform: translateX(2px) rotate(1deg); }
+}
+
+// 弹入动画
+@keyframes popIn {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// 淡入动画
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// 弹窗缩放动画
+@keyframes popInScale {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// H5 适配
+.platform-h5 {
+  .follows-list {
+    &__container {
+      padding: 12px 0 !important;
+      gap: 12px !important;
+    }
+
+    &__add-btn {
+      width: 80px !important;
+    }
+
+    &__add-icon {
+      width: 60px !important;
+      height: 60px !important;
+      font-size: 18px !important;
+      margin-bottom: 4px !important;
+    }
+
+    &__add-text {
+      font-size: 12px !important;
+    }
+
+    &__user {
+      width: 80px !important;
+    }
+
+    &__user-avatar {
+      width: 60px !important;
+      height: 60px !important;
+      margin-bottom: 4px !important;
+      border-width: 2px !important;
+    }
+
+    &__user-name {
+      font-size: 12px !important;
+    }
+
+    &__delete-btn {
+      width: 24px !important;
+      height: 24px !important;
+      top: -4px !important;
+      right: 4px !important;
+    }
+
+    &__delete-icon {
+      font-size: 14px !important;
+    }
+
+    &__search-header {
+      padding: 12px !important;
+    }
+
+    &__search-title {
+      font-size: 16px !important;
+    }
+
+    &__search-close {
+      width: 32px !important;
+      height: 32px !important;
+    }
+
+    &__search-close-icon {
+      font-size: 18px !important;
+    }
+
+    &__search-input-container {
+      padding: 12px !important;
+    }
+
+    &__search-input {
+      padding: 8px 12px !important;
+      font-size: 14px !important;
+    }
+
+    &__search-results {
+      padding: 12px !important;
+    }
+
+    &__search-result {
+      padding: 12px !important;
+      margin-bottom: 8px !important;
+    }
+
+    &__search-result-avatar {
+      width: 50px !important;
+      height: 50px !important;
+      margin-right: 12px !important;
+    }
+
+    &__search-results {
+      padding: 12px !important;
+    }
+
+    &__search-result-name {
+      font-size: 14px !important;
+      margin-bottom: 2px !important;
+    }
+
+    &__search-result-bio {
+      font-size: 12px !important;
+    }
+
+    &__search-result-action {
+      margin-left: 8px !important;
+    }
+
+    &__search-empty {
+      padding: 20px !important;
+      gap: 8px !important;
+    }
+
+    &__search-empty-icon {
+      font-size: 48px !important;
+    }
+
+    &__search-empty-text {
+      font-size: 12px !important;
+    }
+
+    &__follow-btn {
+      padding: 4px 12px !important;
+      font-size: 12px !important;
+      min-width: 60px !important;
+    }
+  }
+
+  // 移动端优化
+  @media (max-width: 480px) {
+    .follows-list {
+      &__container {
+        gap: 8px !important;
+      }
+
+      &__add-btn {
+        width: 70px !important;
+      }
+
+      &__add-icon {
+        width: 50px !important;
+        height: 50px !important;
+        font-size: 16px !important;
+      }
+
+      &__user {
+        width: 70px !important;
+      }
+
+      &__user-avatar {
+        width: 50px !important;
+        height: 50px !important;
+      }
+
+      &__user-name {
+        font-size: 11px !important;
+      }
+    }
+  }
+}

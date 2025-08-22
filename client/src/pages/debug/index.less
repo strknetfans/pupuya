@@ -1,0 +1,68 @@
+@import '../../styles/variables.less';
+
+.debug-page {
+  padding: @spacing-lg;
+  min-height: 100vh;
+  background: @background-color;
+}
+
+.debug-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: @spacing-lg;
+  padding-bottom: @spacing-md;
+  border-bottom: 1px solid @border-color;
+}
+
+.debug-title {
+  font-size: @font-size-lg;
+  font-weight: bold;
+  color: @text-color;
+}
+
+.debug-content {
+  display: flex;
+  flex-direction: column;
+  gap: @spacing-lg;
+}
+
+.debug-section {
+  background: @background-color-white;
+  padding: @spacing-lg;
+  border-radius: @border-radius-lg;
+  box-shadow: @box-shadow-sm;
+}
+
+.debug-section-title {
+  font-size: @font-size-md;
+  font-weight: 600;
+  color: @primary-color;
+  margin-bottom: @spacing-md;
+  display: block;
+}
+
+.debug-item {
+  display: block;
+  font-size: @font-size-sm;
+  color: @text-color-light;
+  margin-bottom: @spacing-xs;
+  line-height: 1.5;
+}
+
+// H5适配
+.platform-h5 {
+  .debug-title {
+    font-size: 18px !important;
+  }
+  
+  .debug-section-title {
+    font-size: 16px !important;
+    margin-bottom: 8px !important;
+  }
+  
+  .debug-item {
+    font-size: 14px !important;
+    margin-bottom: 4px !important;
+  }
+}

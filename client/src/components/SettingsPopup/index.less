@@ -1,0 +1,297 @@
+@import '../../styles/variables.less';
+
+.settings-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: @spacing-xl;
+
+  &__mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+  }
+
+  &__content {
+    position: relative;
+    width: 100%;
+    max-width: 560px;
+    background: @background-color-white;
+    border-radius: @border-radius-xl;
+    padding: @spacing-xxl @spacing-xl;
+    animation: popIn 0.3s ease-out;
+  }
+
+  &__close {
+    position: absolute;
+    top: @spacing-lg;
+    right: @spacing-lg;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  &__close-icon {
+    font-size: @font-size-lg;
+    color: @text-color-light;
+  }
+
+  &__header {
+    text-align: center;
+    margin-bottom: @spacing-xl;
+  }
+
+  &__title {
+    font-size: @font-size-xl;
+    font-weight: 600;
+    color: @text-color;
+    line-height: 1.3;
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: @spacing-md;
+    margin-bottom: @spacing-xl;
+    justify-content: center;
+  }
+
+  &__tag {
+    padding: @spacing-sm @spacing-lg;
+    background: @background-color;
+    border-radius: @border-radius-lg;
+    border: 1px solid @border-color;
+  }
+
+  &__tag-text {
+    font-size: @font-size-sm;
+    color: @text-color;
+  }
+
+  &__hint {
+    text-align: center;
+    margin-bottom: @spacing-xxl;
+  }
+
+  &__hint-text {
+    font-size: @font-size-xs;
+    color: @text-color-lighter;
+    line-height: 1.4;
+  }
+
+  &__feedback {
+    display: flex;
+    gap: @spacing-lg;
+    margin-bottom: @spacing-xxl;
+  }
+
+  &__feedback-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: @spacing-lg;
+    border-radius: @border-radius-lg;
+    cursor: pointer;
+    transition: all @duration-base;
+    min-height: 100px;
+
+    &--content {
+      background: fade(@primary-color, 8%);
+      border: 1px solid fade(@primary-color, 20%);
+
+      &:hover {
+        background: fade(@primary-color, 12%);
+      }
+    }
+
+    &--author {
+      background: fade(#ff4757, 8%);
+      border: 1px solid fade(#ff4757, 20%);
+
+      &:hover {
+        background: fade(#ff4757, 12%);
+      }
+    }
+  }
+
+  &__feedback-icon {
+    font-size: @font-size-xxl;
+    margin-bottom: @spacing-sm;
+  }
+
+  &__feedback-text {
+    font-size: @font-size-md;
+    color: @text-color;
+    font-weight: 500;
+  }
+
+  &__footer {
+    display: flex;
+    gap: @spacing-lg;
+  }
+
+  &__btn {
+    flex: 1;
+    height: 80px;
+    border-radius: @border-radius-lg;
+    font-size: @font-size-md;
+    font-weight: 500;
+
+    &--reset {
+      background: @background-color;
+      color: @text-color;
+      border: 1px solid @border-color;
+    }
+
+    &--confirm {
+      background: @primary-color;
+      color: @background-color-white;
+      border: none;
+    }
+  }
+}
+
+// 弹入动画
+@keyframes popIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// H5 适配
+.platform-h5 {
+  .settings-popup {
+    padding: 16px !important;
+
+    &__content {
+      max-width: 400px !important;
+      padding: 20px 16px !important;
+    }
+
+    &__close {
+      top: 12px !important;
+      right: 12px !important;
+      width: 32px !important;
+      height: 32px !important;
+    }
+
+    &__close-icon {
+      font-size: 16px !important;
+    }
+
+    &__title {
+      font-size: 18px !important;
+      margin-bottom: 16px !important;
+    }
+
+    &__tags {
+      gap: 8px !important;
+      margin-bottom: 20px !important;
+    }
+
+    &__tag {
+      padding: 6px 12px !important;
+    }
+
+    &__tag-text {
+      font-size: 13px !important;
+    }
+
+    &__hint {
+      margin-bottom: 20px !important;
+    }
+
+    &__hint-text {
+      font-size: 12px !important;
+    }
+
+    &__feedback {
+      gap: 12px !important;
+      margin-bottom: 20px !important;
+    }
+
+    &__feedback-btn {
+      padding: 12px !important;
+      min-height: 80px !important;
+    }
+
+    &__feedback-icon {
+      font-size: 20px !important;
+      margin-bottom: 4px !important;
+    }
+
+    &__feedback-text {
+      font-size: 13px !important;
+    }
+
+    &__footer {
+      gap: 12px !important;
+    }
+
+    &__btn {
+      height: 44px !important;
+      font-size: 14px !important;
+    }
+  }
+
+  // 移动端优化
+  @media (max-width: 480px) {
+    .settings-popup {
+      padding: 12px !important;
+
+      &__content {
+        padding: 16px 12px !important;
+      }
+
+      &__tags {
+        gap: 6px !important;
+      }
+
+      &__tag {
+        padding: 4px 8px !important;
+      }
+
+      &__tag-text {
+        font-size: 12px !important;
+      }
+
+      &__feedback {
+        flex-direction: column;
+        gap: 8px !important;
+      }
+
+      &__feedback-btn {
+        min-height: 60px !important;
+        padding: 8px !important;
+      }
+
+      &__feedback-icon {
+        font-size: 18px !important;
+      }
+
+      &__feedback-text {
+        font-size: 12px !important;
+      }
+    }
+  }
+}

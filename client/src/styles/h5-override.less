@@ -1,0 +1,208 @@
+// H5 环境样式覆盖
+// 用于解决H5环境下的显示问题
+
+// 全局样式重置
+body {
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Header组件H5适配
+.home-header {
+  padding: 10px 15px 8px !important;
+  
+  &__top {
+    height: 50px !important;
+  }
+  
+  &__settings,
+  &__search {
+    width: 50px !important;
+    height: 50px !important;
+  }
+  
+  &__settings-icon,
+  &__search-icon {
+    font-size: 20px !important;
+  }
+  
+  &__tab {
+    font-size: 16px !important;
+    padding: 8px 12px !important;
+    
+    &--active::after {
+      bottom: -8px !important;
+      width: 20px !important;
+      height: 3px !important;
+    }
+  }
+  
+  &__tabs {
+    gap: 30px !important;
+  }
+}
+
+// 瀑布流组件H5适配
+.waterfall-flow {
+  padding: 12px 12px 80px !important;
+  
+  &__container {
+    gap: 12px !important;
+  }
+  
+  &__loading {
+    padding: 20px 0 !important;
+    font-size: 14px !important;
+  }
+}
+
+.waterfall-card {
+  border-radius: 8px !important;
+  
+  &__image {
+    height: 200px !important;
+  }
+  
+  &__content {
+    padding: 12px !important;
+  }
+  
+  &__title {
+    font-size: 16px !important;
+    margin-bottom: 6px !important;
+    line-height: 1.4 !important;
+    display: -webkit-box !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 2 !important;
+    overflow: hidden !important;
+    word-break: break-word;
+    hyphens: auto;
+  }
+  
+  &__description {
+    font-size: 14px !important;
+    margin-bottom: 12px !important;
+    line-height: 1.5 !important;
+    display: -webkit-box !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 3 !important;
+    overflow: hidden !important;
+    word-break: break-word;
+    hyphens: auto;
+  }
+  
+  &__avatar {
+    width: 24px !important;
+    height: 24px !important;
+  }
+  
+  &__username {
+    font-size: 13px !important;
+    max-width: 80px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  &__user {
+    gap: 6px !important;
+  }
+  
+  &__stats {
+    gap: 12px !important;
+  }
+  
+  &__stat-icon {
+    font-size: 12px !important;
+  }
+  
+  &__stat-count {
+    font-size: 12px !important;
+  }
+}
+
+// TabBar组件H5适配
+.tab-bar {
+  &__container {
+    height: 60px !important;
+    padding: 0 12px !important;
+  }
+  
+  &__item {
+    gap: 4px !important;
+    padding: 8px 6px !important;
+    border-radius: 8px !important;
+  }
+  
+  &__icon {
+    font-size: 24px !important;
+  }
+  
+  &__title {
+    font-size: 12px !important;
+  }
+}
+
+// 响应式适配
+@media (max-width: 480px) {
+  .home-header {
+    padding: 8px 12px 6px !important;
+    
+    &__tab {
+      font-size: 14px !important;
+      padding: 6px 10px !important;
+    }
+    
+    &__tabs {
+      gap: 20px !important;
+    }
+  }
+  
+  .waterfall-flow {
+    padding: 10px 10px 70px !important;
+    
+    &__container {
+      gap: 10px !important;
+    }
+  }
+  
+  .waterfall-card {
+    &__image {
+      height: 150px !important;
+    }
+    
+    &__content {
+      padding: 10px !important;
+    }
+    
+    &__title {
+      font-size: 15px !important;
+    }
+    
+    &__description {
+      font-size: 13px !important;
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .home-page {
+    max-width: 480px;
+    margin: 0 auto;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .waterfall-flow {
+    &__container {
+      gap: 16px !important;
+    }
+  }
+  
+  .waterfall-card {
+    &__image {
+      height: 240px !important;
+    }
+  }
+}
