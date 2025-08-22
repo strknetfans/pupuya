@@ -1,0 +1,292 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String             @id @default(uuid())
+  phone            String?            @unique
+  wechatId         String?
+  appleId          String?
+  username         String             @unique @db.VarChar(24)
+  avatar           String?
+  profession       String?
+  gender           Gender             @default(OTHER)
+  zodiac           Zodiac?
+  mbti             MBTI?
+  following        User[]             @relation("UserFollows")
+  followers        User[]             @relation("UserFollows")
+  contents         Content[]
+  likes            Like[]
+  favorites        Favorite[]
+  points           PointTransaction[]
+  tasks            TaskProgress[]
+  settings         UserSettings?
+  generationTasks  GenerationTask[]
+  comments         Comment[]
+  sentMessages     Message[]          @relation("SentMessages")
+  receivedMessages Message[]          @relation("ReceivedMessages")
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+// 星座枚举类型
+enum Zodiac {
+  ARIES // 白羊座(3/21-4/19)
+  TAURUS // 金牛座(4/20-5/20)
+  GEMINI // 双子座(5/21-6/21)
+  CANCER // 巨蟹座(6/22-7/22)
+  LEO // 狮子座(7/23-8/22)
+  VIRGO // 处女座(8/23-9/22)
+  LIBRA // 天秤座(9/23-10/23)
+  SCORPIO // 天蝎座(10/24-11/22)
+  SAGITTARIUS // 射手座(11/23-12/21)
+  CAPRICORN // 摩羯座(12/22-1/19)
+  AQUARIUS // 水瓶座(1/20-2/18)
+  PISCES // 双鱼座(2/19-3/20)
+}
+
+// MBTI枚举类型(完整16型人格)
+enum MBTI {
+  ISTJ
+  ISFJ
+  INFJ
+  INTJ
+  ISTP
+  ISFP
+  INFP
+  INTP
+  ESTP
+  ESFP
+  ENFP
+  ENTP
+  ESTJ
+  ESFJ
+  ENFJ
+  ENTJ
+}
+
+model UserSettings {
+  id             String   @id @default(uuid())
+  user           User     @relation(fields: [userId], references: [id])
+  userId         String   @unique
+  privacy        Json // 隐私设置
+  notification   Json // 通知设置
+  permissions    Json // 权限设置
+  showGender     Boolean  @default(false)
+  showProfession Boolean  @default(false)
+  showZodiac     Boolean  @default(false)
+  showMBTI       Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model GenerationTask {
+  id             String                @id @default(uuid())
+  user           User                  @relation(fields: [userId], references: [id])
+  userId         String
+  type           TaskType              @default(TEXT_TO_IMAGE)
+  prompt         String
+  negativePrompt String?
+  width          Int                   @default(768)
+  height         Int                   @default(1024)
+  seed           Int?
+  steps          Int                   @default(20)
+  cfgScale       Float                 @default(7.0)
+  model          String?
+  controlMode    String?
+  status         TaskStatus            @default(PENDING)
+  createTime     DateTime              @default(now())
+  updateTime     DateTime              @updatedAt
+  content        Content?
+  images         GenerationTaskImage[]
+  styles         GenerationTaskStyle[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+model GenerationTaskImage {
+  id               String         @id @default(uuid())
+  url              String
+  generationTask   GenerationTask @relation(fields: [generationTaskId], references: [id])
+  generationTaskId String
+}
+
+model GenerationTaskStyle {
+  id               String         @id @default(uuid())
+  style            String
+  generationTask   GenerationTask @relation(fields: [generationTaskId], references: [id])
+  generationTaskId String
+}
+
+enum TaskType {
+  TEXT_TO_IMAGE
+  IMAGE_TO_IMAGE
+  AI_EXPAND
+}
+
+enum TaskStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model StyleModel {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  category    String
+  isOfficial  Boolean  @default(true)
+  isActive    Boolean  @default(true)
+  thumbnail   String?
+  createdAt   DateTime @default(now())
+}
+
+model Content {
+  id          String          @id @default(uuid())
+  user        User            @relation(fields: [userId], references: [id])
+  userId      String
+  task        GenerationTask? @relation(fields: [taskId], references: [id])
+  taskId      String?         @unique
+  title       String?
+  description String?
+  privacy     PrivacyType     @default(PUBLIC)
+  viewCount   Int             @default(0)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  images      ContentImage[]
+  tags        Tag[]
+  likes       Like[]
+  favorites   Favorite[]
+  comments    Comment[]
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model ContentImage {
+  id        String  @id @default(uuid())
+  url       String
+  content   Content @relation(fields: [contentId], references: [id])
+  contentId String
+}
+
+model Tag {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  contents    Content[]
+  count       Int       @default(0)
+  createdAt   DateTime  @default(now())
+}
+
+enum PrivacyType {
+  PUBLIC
+  FRIENDS
+  PRIVATE
+}
+
+model Like {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  content   Content  @relation(fields: [contentId], references: [id])
+  contentId String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, contentId])
+}
+
+model Favorite {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  content   Content  @relation(fields: [contentId], references: [id])
+  contentId String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, contentId])
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  content   Content  @relation(fields: [contentId], references: [id])
+  contentId String
+  text      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Message {
+  id         String   @id @default(uuid())
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
+  senderId   String
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  receiverId String
+  text       String
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model PointTransaction {
+  id          String    @id @default(uuid())
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  type        PointType // 积分类型(签到/任务/兑换等)
+  amount      Int // 正数为收入，负数为支出
+  balance     Int // 交易后余额
+  description String?
+  createdAt   DateTime  @default(now())
+
+  @@index([userId])
+}
+
+enum PointType {
+  SIGN_IN // 签到
+  GENERATION // 生成任务
+  SHARE // 分享
+  INVITE // 邀请
+  PURCHASE // 购买
+  CONSUMPTION // 消费
+}
+
+model TaskProgress {
+  id          String       @id @default(uuid())
+  user        User         @relation(fields: [userId], references: [id])
+  userId      String
+  type        TaskTypeEnum
+  completed   Boolean      @default(false)
+  progress    Int          @default(0)
+  lastUpdated DateTime     @default(now())
+
+  @@unique([userId, type])
+}
+
+enum TaskTypeEnum {
+  DAILY_SIGN_IN // 每日签到
+  SHARE_TASK // 分享任务
+  GENERATE_TASK // 生成任务
+  INVITE_FRIENDS // 邀请好友
+  COMPLETE_PROFILE // 完善资料
+}
