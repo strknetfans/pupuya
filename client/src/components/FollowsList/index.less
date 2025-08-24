@@ -1,11 +1,17 @@
 @import '../../styles/variables.less';
 
 .follows-list {
+  padding: @spacing-md @spacing-lg;
+  background: @background-color-white;
+  border-radius: 0 0 20px 20px;
+  margin-bottom: @spacing-md;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+
   &__container {
     display: flex;
     align-items: center;
-    padding: @spacing-lg 0;
-    gap: @spacing-lg;
+    padding: @spacing-sm 0;
+    gap: @spacing-sm;
     overflow-x: auto;
     
     // 隐藏滚动条
@@ -20,32 +26,44 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    width: 120px;
+    width: 70px;
     cursor: pointer;
-    transition: transform @duration-base;
+    transition: all @duration-base;
 
     &:active {
       transform: scale(0.95);
     }
+
+    &:hover {
+      transform: translateY(-2px);
+    }
   }
 
   &__add-icon {
-    width: 80px;
-    height: 80px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     border: 2px dashed @primary-color;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: @font-size-xxl;
+    font-size: @font-size-lg;
     color: @primary-color;
-    background: fade(@primary-color, 8%);
-    margin-bottom: @spacing-sm;
+    background: linear-gradient(135deg, fade(@primary-color, 8%) 0%, fade(@primary-color, 15%) 100%);
+    margin-bottom: @spacing-xs;
+    transition: all @duration-base;
+    box-shadow: 0 4px 15px fade(@primary-color, 20%);
+
+    &:hover {
+      background: linear-gradient(135deg, fade(@primary-color, 15%) 0%, fade(@primary-color, 25%) 100%);
+      box-shadow: 0 6px 20px fade(@primary-color, 30%);
+    }
   }
 
   &__add-text {
-    font-size: @font-size-sm;
+    font-size: @font-size-xs;
     color: @text-color-light;
+    font-weight: 500;
   }
 
   &__user {
@@ -53,13 +71,17 @@
     flex-direction: column;
     align-items: center;
     flex-shrink: 0;
-    width: 120px;
+    width: 70px;
     position: relative;
     cursor: pointer;
-    transition: transform @duration-base;
+    transition: all @duration-base;
 
     &:active {
       transform: scale(0.95);
+    }
+
+    &:hover {
+      transform: translateY(-3px);
     }
 
     &--delete-mode {
@@ -68,22 +90,35 @@
   }
 
   &__user-avatar {
-    width: 80px;
-    height: 80px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    margin-bottom: @spacing-sm;
+    margin-bottom: @spacing-xs;
     border: 3px solid @background-color-white;
-    box-shadow: @box-shadow-sm;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    transition: all @duration-base;
+    object-fit: cover;
+
+    &:hover {
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+      transform: scale(1.05);
+    }
   }
 
   &__user-name {
-    font-size: @font-size-sm;
+    font-size: @font-size-xs;
     color: @text-color;
     text-align: center;
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    font-weight: 500;
+    transition: color @duration-base;
+
+    &:hover {
+      color: @primary-color;
+    }
   }
 
   &__delete-btn {
@@ -93,24 +128,23 @@
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: #ff4757;
+    background: linear-gradient(135deg, #ff4757 0%, #ff3742 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: @box-shadow-md;
-    animation: popIn 0.2s ease-out;
+    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
     cursor: pointer;
     z-index: 10;
-    
+    transition: all @duration-base;
+
+    &:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(255, 71, 87, 0.6);
+    }
+
     &:active {
       transform: scale(0.9);
     }
-  }
-
-  &__delete-icon {
-    color: @background-color-white;
-    font-size: @font-size-lg;
-    font-weight: bold;
   }
 
   &__loading,
@@ -141,6 +175,10 @@
     justify-content: center;
     padding: @spacing-xl;
     animation: fadeIn 0.3s ease-out;
+    // 防止触摸事件穿透
+    touch-action: none;
+    // 防止页面滚动
+    overflow: hidden;
   }
 
   // 搜索弹窗样式
@@ -157,6 +195,8 @@
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
     position: relative;
     animation: popInScale 0.3s ease-out;
+    // 允许弹窗内容滚动
+    touch-action: pan-y;
   }
 
   &__search-header {
@@ -165,6 +205,7 @@
     justify-content: space-between;
     padding: @spacing-lg;
     border-bottom: 1px solid @border-color;
+    flex-shrink: 0;
   }
 
   &__search-title {
@@ -183,6 +224,7 @@
     cursor: pointer;
     background: @background-color;
     transition: all @duration-base;
+    flex-shrink: 0;
 
     &:active {
       transform: scale(0.9);
@@ -199,6 +241,7 @@
   &__search-input-container {
     padding: @spacing-lg;
     border-bottom: 1px solid @border-color;
+    flex-shrink: 0;
   }
 
   &__search-input {
@@ -214,6 +257,23 @@
     flex: 1;
     overflow-y: auto;
     padding: @spacing-lg;
+    // 确保滚动条样式
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 2px;
+    }
+    
+    &::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 0, 0, 0.3);
+    }
   }
 
   &__search-loading {
@@ -389,49 +449,49 @@
 .platform-h5 {
   .follows-list {
     &__container {
-      padding: 12px 0 !important;
-      gap: 12px !important;
+      padding: 8px 0 !important;
+      gap: 8px !important;
     }
 
     &__add-btn {
-      width: 80px !important;
+      width: 60px !important;
     }
 
     &__add-icon {
-      width: 60px !important;
-      height: 60px !important;
-      font-size: 18px !important;
-      margin-bottom: 4px !important;
+      width: 45px !important;
+      height: 45px !important;
+      font-size: 16px !important;
+      margin-bottom: 3px !important;
     }
 
     &__add-text {
-      font-size: 12px !important;
+      font-size: 11px !important;
     }
 
     &__user {
-      width: 80px !important;
+      width: 60px !important;
     }
 
     &__user-avatar {
-      width: 60px !important;
-      height: 60px !important;
-      margin-bottom: 4px !important;
+      width: 45px !important;
+      height: 45px !important;
+      margin-bottom: 3px !important;
       border-width: 2px !important;
     }
 
     &__user-name {
-      font-size: 12px !important;
+      font-size: 11px !important;
     }
 
     &__delete-btn {
-      width: 24px !important;
-      height: 24px !important;
-      top: -4px !important;
-      right: 4px !important;
+      width: 20px !important;
+      height: 20px !important;
+      top: -3px !important;
+      right: 3px !important;
     }
 
     &__delete-icon {
-      font-size: 14px !important;
+      font-size: 12px !important;
     }
 
     &__search-header {
@@ -542,5 +602,30 @@
         font-size: 11px !important;
       }
     }
+  }
+}
+
+// 全局样式：弹窗打开时禁止页面滚动
+:global {
+  body.popup-open {
+    overflow: hidden !important;
+    position: fixed !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+  
+  // H5环境下的特殊处理
+  .platform-h5 body.popup-open {
+    overflow: hidden !important;
+    position: fixed !important;
+    width: 100vw !important;
+    height: 100vh !important;
+  }
+}
+
+// 弹窗打开时的页面状态
+.popup-open {
+  .follows-list__container {
+    pointer-events: none;
   }
 }

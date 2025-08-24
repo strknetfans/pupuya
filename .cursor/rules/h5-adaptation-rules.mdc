@@ -1,0 +1,213 @@
+# H5适配开发规范
+
+> 基于 Taro 框架的 H5 环境适配最佳实践
+
+## 📋 适配原则
+
+### 设计理念
+- **自动适配**：通过平台检测自动应用适配样式
+- **样式覆盖**：使用 `!important` 确保H5样式优先级
+- **响应式设计**：支持不同设备尺寸的自适应布局
+- **兼容性优先**：保持与小程序的完美兼容
+
+### 核心约束
+- H5字体大小应为小程序的 40%-60%
+- H5间距应为小程序的 50%-70%
+- 点击区域在H5环境下不应小于 44px
+- 图片高度在H5环境下应适当缩小
+
+## 🏗️ 技术实现
+
+### 平台检测工具
+```typescript
+// src/utils/platform.ts
+export class PlatformUtils {
+  static isH5(): boolean
+  static isMiniProgram(): boolean
+  static getPlatformClass(): string
+  static getDebugInfo(): object
+}
+```
+
+### 样式变量系统
+```less
+// src/styles/variables.less
+// 小程序变量
+@font-size-lg: 32px;
+@spacing-lg: 20px;
+
+// H5专用变量
+@font-size-h5-lg: 18px;
+@spacing-h5-lg: 12px;
+```
+
+### 自动样式切换
+```less
+// 组件默认样式（小程序）
+.component {
+  font-size: @font-size-lg;
+  padding: @spacing-lg;
+}
+
+// H5环境覆盖样式
+.platform-h5 .component {
+  font-size: @font-size-h5-lg !important;
+  padding: @spacing-h5-lg !important;
+}
+```
+
+## 🎨 样式适配规范
+
+### 字体大小映射
+| 小程序 | H5环境 | 使用场景 |
+|--------|--------|----------|
+| 40px | 24px | 大标题 |
+| 32px | 18px | 中标题 |
+| 28px | 16px | 正文 |
+| 24px | 14px | 辅助文字 |
+| 20px | 12px | 小字 |
+
+### 间距映射
+| 小程序 | H5环境 | 使用场景 |
+|--------|--------|----------|
+| 32px | 20px | 大间距 |
+| 24px | 16px | 中间距 |
+| 20px | 12px | 常规间距 |
+| 16px | 8px | 小间距 |
+| 12px | 6px | 微间距 |
+
+### 组件尺寸调整
+```less
+// Header组件
+.platform-h5 .home-header {
+  &__top { height: 50px !important; }
+  &__tab { font-size: 16px !important; }
+  &__icon { font-size: 20px !important; }
+}
+
+// 卡片组件
+.platform-h5 .waterfall-card {
+  &__image { height: 200px !important; }
+  &__title { font-size: 16px !important; }
+  &__description { font-size: 14px !important; }
+}
+
+// TabBar组件
+.platform-h5 .tab-bar {
+  &__container { height: 60px !important; }
+  &__icon { font-size: 24px !important; }
+  &__title { font-size: 12px !important; }
+}
+```
+
+## 📱 响应式设计
+
+### 断点定义
+```less
+// 移动端
+@media (max-width: 480px) {
+  // 进一步优化间距和字体
+}
+
+// 桌面端
+@media (min-width: 768px) {
+  .home-page {
+    max-width: 480px;
+    margin: 0 auto;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  }
+}
+```
+
+### 适配策略
+- **移动端**：更紧凑的布局，更小的字体
+- **桌面端**：居中显示，添加阴影效果
+- **触摸优化**：确保点击区域足够大
+
+## 🔧 环境自动识别
+
+### 应用入口配置
+```typescript
+// src/app.ts
+function App(props) {
+  useEffect(() => {
+    if (PlatformUtils.isH5()) {
+      document.body.classList.add('platform-h5')
+    }
+  })
+  
+  return props.children
+}
+```
+
+### 组件平台类名
+```typescript
+// 页面组件
+<View className={`page ${PlatformUtils.getPlatformClass()}`}>
+```
+
+## 🛠️ 开发工作流
+
+### 样式开发流程
+1. **默认设计**：按小程序规范开发
+2. **H5覆盖**：在 `h5-override.less` 中添加适配样式
+3. **响应式增强**：添加媒体查询支持
+4. **测试验证**：分别在小程序和H5环境测试
+
+### 文件组织
+```bash
+src/
+├── styles/
+│   ├── variables.less      # 统一变量定义
+│   └── h5-override.less   # H5专用覆盖样式
+├── utils/
+│   └── platform.ts       # 平台检测工具
+└── pages/debug/           # 调试页面（开发环境）
+```
+
+## 📊 性能考虑
+
+### 样式加载优化
+- H5覆盖样式只在H5环境加载
+- 使用CSS-in-JS时进行平台判断
+- 避免不必要的样式计算
+
+### 代码分割
+```typescript
+// 平台特定代码
+if (PlatformUtils.isH5()) {
+  // H5特定逻辑
+} else if (PlatformUtils.isMiniProgram()) {
+  // 小程序特定逻辑
+}
+```
+
+## 🧪 测试规范
+
+### 跨平台测试
+- **H5测试**：`yarn dev:h5`
+- **小程序测试**：`yarn dev:weapp`
+- **调试页面**：访问 `/pages/debug/index`
+
+### 检查清单
+- [ ] 字体大小是否合适
+- [ ] 间距布局是否协调
+- [ ] 点击区域是否足够
+- [ ] 响应式是否正常
+- [ ] 各平台功能一致性
+
+## ⚠️ 注意事项
+
+### 常见问题
+1. **样式优先级**：必须使用 `!important` 确保H5样式覆盖
+2. **单位转换**：Taro会自动处理px转换，无需手动计算
+3. **平台API**：某些API在H5环境可能不可用，需要降级处理
+
+### 最佳实践
+- 优先考虑小程序设计，H5作为适配补充
+- 保持设计的一致性，只调整尺寸不改变布局
+- 定期在两个平台测试，确保功能正常
+- 使用调试页面辅助开发和问题排查
+
+---
+*这套规范确保了Taro应用在H5和小程序环境下的最佳显示效果*

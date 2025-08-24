@@ -62,7 +62,9 @@ body {
   border-radius: 8px !important;
   
   &__image {
-    height: 200px !important;
+    height: 100% !important; // 修复：让图片铺满整个容器
+    width: 100% !important;
+    object-fit: cover !important;
   }
   
   &__content {
@@ -170,7 +172,9 @@ body {
   
   .waterfall-card {
     &__image {
-      height: 150px !important;
+      height: 100% !important; // 修复：让图片铺满整个容器
+      width: 100% !important;
+      object-fit: cover !important;
     }
     
     &__content {
@@ -202,7 +206,9 @@ body {
   
   .waterfall-card {
     &__image {
-      height: 240px !important;
+      height: 100% !important; // 修复：让图片铺满整个容器
+      width: 100% !important;
+      object-fit: cover !important;
     }
   }
 }

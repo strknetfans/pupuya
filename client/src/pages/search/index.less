@@ -1,0 +1,380 @@
+@import '../../styles/variables.less';
+
+.search-page {
+  min-height: 100vh;
+  background: @background-color;
+  padding-top: env(safe-area-inset-top, 0);
+}
+
+// 搜索头部
+.search-header {
+  display: flex;
+  align-items: center;
+  padding: @spacing-md @spacing-lg; // 从@spacing-lg @spacing-xl减小
+  background: @background-color-white;
+  border-bottom: 1px solid @border-color;
+  gap: @spacing-md; // 从@spacing-lg减小
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.search-input-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: #f5f5f5;
+  border-radius: 20px;
+  padding: @spacing-xs @spacing-md; // 从@spacing-sm @spacing-lg减小
+  gap: @spacing-xs; // 从@spacing-sm减小
+}
+
+.search-icon {
+  color: @text-color-light;
+  flex-shrink: 0;
+}
+
+.search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 16px; // 从@font-size-md改为固定16px
+  color: @text-color;
+  
+  &::placeholder {
+    color: @text-color-lighter;
+  }
+}
+
+.cancel-btn {
+  color: @text-color-light;
+  font-size: 16px; // 从@font-size-md改为固定16px
+  padding: @spacing-sm @spacing-md;
+  cursor: pointer;
+  transition: color @duration-base;
+  
+  &:active {
+    color: @primary-color;
+  }
+}
+
+// 搜索内容
+.search-content {
+  flex: 1;
+  padding: @spacing-md @spacing-lg; // 从@spacing-lg @spacing-xl减小
+}
+
+// 搜索区块
+.search-section {
+  margin-bottom: @spacing-lg; // 从@spacing-xxl减小
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: @spacing-md; // 从@spacing-lg减小
+}
+
+.section-title {
+  font-size: 18px; // 从@font-size-lg改为固定18px
+  font-weight: 600;
+  color: @text-color;
+}
+
+.clear-icon,
+.refresh-icon {
+  color: @text-color-light;
+  cursor: pointer;
+  transition: color @duration-base;
+  
+  &:active {
+    color: @primary-color;
+  }
+}
+
+// 历史记录标签
+.history-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: @spacing-sm; // 从@spacing-md减小
+}
+
+.history-tag {
+  background: #e3f2fd;
+  border-radius: 16px;
+  padding: @spacing-xs @spacing-md; // 从@spacing-sm @spacing-lg减小
+  cursor: pointer;
+  transition: all @duration-base;
+  
+  &:active {
+    background: #bbdefb;
+    transform: scale(0.95);
+  }
+}
+
+.tag-text {
+  color: #1976d2;
+  font-size: 14px; // 从@font-size-sm改为固定14px
+  font-weight: 500;
+}
+
+// 推荐搜索列表
+.suggested-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: @spacing-sm; // 从@spacing-md减小
+}
+
+.suggested-item {
+  padding: @spacing-sm @spacing-md; // 从@spacing-md @spacing-lg减小
+  background: @background-color-white;
+  border-radius: @border-radius-lg;
+  cursor: pointer;
+  transition: all @duration-base;
+  border: 1px solid transparent;
+  
+  &:active {
+    background: #f5f5f5;
+    border-color: @border-color;
+    transform: scale(0.98);
+  }
+}
+
+.suggested-text {
+  color: @text-color;
+  font-size: 16px; // 从@font-size-md改为固定16px
+  line-height: 1.4;
+}
+
+// 热搜榜
+.trending-section {
+  background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+  border-radius: 16px;
+  padding: @spacing-lg; // 从@spacing-xl减小
+  margin: 0 -@spacing-lg; // 从-@spacing-xl调整
+}
+
+.trending-title {
+  color: #7b1fa2;
+}
+
+.trending-icon {
+  color: #e91e63;
+  margin-right: @spacing-sm;
+}
+
+.trending-list {
+  display: flex;
+  flex-direction: column;
+  gap: @spacing-sm; // 从@spacing-md减小
+}
+
+.trending-item {
+  display: flex;
+  align-items: center;
+  padding: @spacing-sm 0; // 从@spacing-md减小
+  cursor: pointer;
+  transition: background @duration-base;
+  border-radius: @border-radius-md;
+  
+  &:active {
+    background: rgba(255, 255, 255, 0.3);
+  }
+}
+
+.trending-rank {
+  width: 40px;
+  text-align: center;
+  margin-right: @spacing-md; // 从@spacing-lg减小
+}
+
+.rank-number {
+  font-size: 18px; // 从@font-size-lg改为固定18px
+  font-weight: 700;
+  color: @text-color-light;
+  
+  &.top-rank {
+    color: #e91e63;
+  }
+}
+
+.trending-keyword {
+  flex: 1;
+  font-size: 16px; // 从@font-size-md改为固定16px
+  color: @text-color;
+  font-weight: 500;
+}
+
+.trending-score {
+  font-size: 14px; // 从@font-size-sm改为固定14px
+  color: @text-color-light;
+  margin-left: @spacing-md; // 从@spacing-lg减小
+}
+
+// 搜索中遮罩
+.search-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: @spacing-md; // 从@spacing-md减小
+  background: @background-color-white;
+  padding: @spacing-lg; // 从@spacing-xxl减小
+  border-radius: @border-radius-lg;
+  box-shadow: @box-shadow-lg;
+}
+
+.loading-icon {
+  color: @primary-color;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  color: @text-color;
+  font-size: 16px; // 从@font-size-md改为固定16px
+}
+
+// 动画
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// H5平台适配
+.platform-h5 {
+  .search-page {
+    padding-top: 0;
+  }
+  
+  .search-header {
+    padding-top: calc(env(safe-area-inset-top, 0) + @spacing-md); // 从@spacing-lg减小
+    padding: @spacing-sm @spacing-md !important; // H5下进一步减小
+    gap: @spacing-sm !important; // H5下进一步减小
+  }
+  
+  .search-content {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0) + @spacing-md); // 从@spacing-lg减小
+    padding: @spacing-sm @spacing-md !important; // H5下进一步减小
+  }
+
+  // H5环境下的字体大小优化
+  .search-input {
+    font-size: 14px !important; // H5下进一步减小
+  }
+
+  .cancel-btn {
+    font-size: 14px !important; // H5下进一步减小
+  }
+
+  .section-title {
+    font-size: 16px !important; // H5下进一步减小
+  }
+
+  .tag-text {
+    font-size: 12px !important; // H5下进一步减小
+  }
+
+  .suggested-text {
+    font-size: 14px !important; // H5下进一步减小
+  }
+
+  .rank-number {
+    font-size: 16px !important; // H5下进一步减小
+  }
+
+  .trending-keyword {
+    font-size: 14px !important; // H5下进一步减小
+  }
+
+  .trending-score {
+    font-size: 12px !important; // H5下进一步减小
+  }
+
+  .loading-text {
+    font-size: 14px !important; // H5下进一步减小
+  }
+
+  // H5环境下的间距优化
+  .search-section {
+    margin-bottom: @spacing-md !important; // H5下进一步减小
+  }
+
+  .section-header {
+    margin-bottom: @spacing-sm !important; // H5下进一步减小
+  }
+
+  .history-tags {
+    gap: @spacing-xs !important; // H5下进一步减小
+  }
+
+  .history-tag {
+    padding: 6px 10px !important; // H5下进一步减小
+  }
+
+  .suggested-list {
+    gap: @spacing-xs !important; // H5下进一步减小
+  }
+
+  .suggested-item {
+    padding: 8px 12px !important; // H5下进一步减小
+  }
+
+  .trending-section {
+    padding: @spacing-md !important; // H5下进一步减小
+    margin: 0 -@spacing-md !important; // H5下进一步减小
+  }
+
+  .trending-list {
+    gap: @spacing-xs !important; // H5下进一步减小
+  }
+
+  .trending-item {
+    padding: 6px 0 !important; // H5下进一步减小
+  }
+
+  .trending-rank {
+    margin-right: @spacing-sm !important; // H5下进一步减小
+  }
+
+  .trending-score {
+    margin-left: @spacing-sm !important; // H5下进一步减小
+  }
+
+  .search-loading {
+    padding: @spacing-md !important; // H5下进一步减小
+    gap: @spacing-sm !important; // H5下进一步减小
+  }
+}
+
+// 小程序平台适配
+.platform-miniprogram {
+  .search-page {
+    padding-top: 0;
+  }
+  
+  .search-header {
+    padding-top: @spacing-lg;
+  }
+}

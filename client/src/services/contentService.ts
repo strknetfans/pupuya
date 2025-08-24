@@ -8,6 +8,7 @@ interface ContentListParams {
   page?: number
   pageSize?: number
   tab?: 'follow' | 'discover'
+  tags?: string[]
 }
 
 interface SearchParams {

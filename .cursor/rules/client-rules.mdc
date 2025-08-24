@@ -1,0 +1,550 @@
+---
+description: 客户端代码技术规范，基于 Taro 框架 + Typescript + NutUI实现跨端开发（小程序、H5、React Native），请注意开发环境h5的适配
+globs:
+  - "client/**/*.ts"
+  - "client/**/*.tsx"
+  - "client/**/*.js"
+  - "client/**/*.jsx"
+  - "client/**/*.scss"
+  - "client/**/*.less"
+  - "client/**/*.json"
+alwaysApply: false
+tags:
+  - "frontend"
+  - "taro"
+  - "react"
+  - "typescript"
+  - "cross-platform"
+priority: 90
+language: "typescript"
+framework: "taro"
+---
+
+# Taro 框架技术规范
+
+## 项目概述
+- 基于 Taro 3.x 版本进行跨端开发
+- 支持微信小程序、支付宝小程序、H5、React Native 等多端
+- 使用 TypeScript 作为主要开发语言
+- 遵循 React Hook 编程范式
+
+## 代码风格规范
+
+### 文件命名
+- 组件文件使用 PascalCase：`UserProfile.tsx`
+- 页面文件使用 kebab-case：`user-profile/index.tsx`
+- 工具类文件使用 camelCase：`apiUtils.ts`
+- 常量文件使用 SCREAMING_SNAKE_CASE：`API_CONSTANTS.ts`
+
+### 目录结构
+```
+client/
+├── src/
+│   ├── app.config.ts          # 全局配置
+│   ├── app.tsx                # 入口文件
+│   ├── pages/                 # 页面目录
+│   │   └── home/
+│   │       ├── index.tsx
+│   │       ├── index.config.ts
+│   │       └── index.scss
+│   ├── components/            # 公共组件
+│   ├── utils/                 # 工具函数
+│   ├── services/              # API 服务
+│   ├── store/                 # 状态管理
+│   ├── assets/                # 静态资源
+│   └── types/                 # 类型定义
+```
+
+## 组件开发规范
+
+### React 组件
+```tsx
+import { FC, memo } from 'react'
+import { View, Text } from '@tarojs/components'
+import './index.scss'
+
+interface Props {
+  title: string
+  subtitle?: string
+  onClick?: () => void
+}
+
+const UserCard: FC<Props> = memo(({ title, subtitle, onClick }) => {
+  return (
+    <View className="user-card" onClick={onClick}>
+      <Text className="user-card__title">{title}</Text>
+      {subtitle && <Text className="user-card__subtitle">{subtitle}</Text>}
+    </View>
+  )
+})
+
+UserCard.displayName = 'UserCard'
+
+export default UserCard
+```
+
+### Hook 使用规范
+- 优先使用 React Hooks 而非 Class 组件
+- 自定义 Hook 以 `use` 开头：`useUserInfo`
+- 合理使用 `useMemo`、`useCallback` 进行性能优化
+- 避免在循环、条件语句中使用 Hook
+
+## 页面开发规范
+
+### 可维护性
+对于常用色值，你需要提取成公共变量，以方便色值调整；对于常用组件，请根据其是否是页面组件还是公共组件，对于通用组件请放置于 src/components目录下；而对于页面特定组件，请放置于page/{page name}/components目录下
+
+### 文本处理规范
+对于动态内容，必须考虑文本超长问题，统一使用文本处理工具函数：
+
+```typescript
+// 使用文本处理工具
+import { formatUsername, formatTitle, formatDescription, formatNumber } from '@/utils/textUtils'
+
+// 用户名处理（H5: 4字符，小程序: 6字符）
+const displayName = formatUsername(user.name, isH5 ? 4 : 6)
+
+// 标题处理（H5: 16字符，小程序: 20字符）
+const displayTitle = formatTitle(content.title, isH5 ? 16 : 20)
+
+// 描述处理（H5: 45字符，小程序: 60字符）
+const displayDesc = formatDescription(content.description, isH5 ? 45 : 60)
+
+// 数字格式化（1000+ 显示为 1k，10000+ 显示为 1w）
+const displayCount = formatNumber(likes)
+```
+
+### CSS文本溢出处理
+```less
+// 单行文本溢出
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// 多行文本溢出
+.text-multiline-ellipsis {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2; // 显示行数
+  overflow: hidden;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+// H5专用文本处理
+.platform-h5 {
+  .username {
+    max-width: 80px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+```
+
+### 页面组件结构
+```tsx
+import { useEffect, useState } from 'react'
+import { View } from '@tarojs/components'
+import Taro, { useDidShow, useLoad } from '@tarojs/taro'
+import './index.scss'
+
+const HomePage = () => {
+  const [loading, setLoading] = useState(false)
+
+  useLoad(() => {
+    console.log('页面加载')
+  })
+
+  useDidShow(() => {
+    console.log('页面显示')
+  })
+
+  return (
+    <View className="home-page">
+      {/* 页面内容 */}
+    </View>
+  )
+}
+
+export default HomePage
+```
+
+### 页面配置文件
+```typescript
+// index.config.ts
+export default definePageConfig({
+  navigationBarTitleText: '首页',
+  navigationBarBackgroundColor: '#ffffff',
+  backgroundColor: '#f8f8f8',
+  enablePullDownRefresh: true
+})
+```
+
+## 样式规范
+
+### SCSS 命名约定
+- 使用 BEM 命名方式
+- 组件样式以组件名为根类名
+- 避免嵌套层级过深（最多 3 层）
+
+```scss
+.user-card {
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+
+  &__title {
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  &__subtitle {
+    font-size: 28px;
+    color: #666;
+    margin-top: 8px;
+  }
+
+  &--active {
+    background: #f0f0f0;
+  }
+}
+```
+
+### 响应式设计
+- 使用 Taro 提供的 `Taro.pxTransform()` 进行尺寸转换
+- 设计稿基准为 750px
+- 关键断点：小程序 375px，H5 需要考虑多尺寸适配
+
+## API 调用规范
+
+### 网络请求封装
+```typescript
+// services/request.ts
+import Taro from '@tarojs/taro'
+
+interface RequestOptions {
+  url: string
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
+  data?: any
+  header?: any
+}
+
+export const request = async <T>(options: RequestOptions): Promise<T> => {
+  const { url, method = 'GET', data, header = {} } = options
+  
+  try {
+    const response = await Taro.request({
+      url: `${API_BASE_URL}${url}`,
+      method,
+      data,
+      header: {
+        'Content-Type': 'application/json',
+        ...header
+      }
+    })
+    
+    if (response.statusCode === 200) {
+      return response.data
+    } else {
+      throw new Error(`请求失败: ${response.statusCode}`)
+    }
+  } catch (error) {
+    Taro.showToast({
+      title: '网络请求失败',
+      icon: 'error'
+    })
+    throw error
+  }
+}
+```
+
+### API 服务层
+```typescript
+// services/userService.ts
+import { request } from './request'
+
+interface User {
+  id: number
+  name: string
+  email: string
+}
+
+export const userService = {
+  getUserInfo: (userId: string): Promise<User> => {
+    return request<User>({
+      url: `/users/${userId}`,
+      method: 'GET'
+    })
+  },
+
+  updateUser: (userId: string, data: Partial<User>): Promise<User> => {
+    return request<User>({
+      url: `/users/${userId}`,
+      method: 'PUT',
+      data
+    })
+  }
+}
+```
+
+## 状态管理规范
+
+### 使用 Zustand 进行状态管理
+```typescript
+// store/userStore.ts
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+
+interface UserState {
+  userInfo: User | null
+  isLoggedIn: boolean
+  setUserInfo: (user: User) => void
+  logout: () => void
+}
+
+export const useUserStore = create<UserState>()(
+  persist(
+    (set) => ({
+      userInfo: null,
+      isLoggedIn: false,
+      setUserInfo: (user) => set({ userInfo: user, isLoggedIn: true }),
+      logout: () => set({ userInfo: null, isLoggedIn: false })
+    }),
+    {
+      name: 'user-storage'
+    }
+  )
+)
+```
+
+## 跨端适配规范
+
+### 平台检测工具
+```typescript
+// src/utils/platform.ts
+import PlatformUtils from './utils/platform'
+
+// 推荐使用统一的平台检测工具
+const isH5 = PlatformUtils.isH5()
+const isMiniProgram = PlatformUtils.isMiniProgram()
+const platformClass = PlatformUtils.getPlatformClass()
+```
+
+### H5适配最佳实践
+```less
+// 小程序默认样式
+.component {
+  font-size: @font-size-lg;    // 32px
+  padding: @spacing-lg;        // 20px
+}
+
+// H5环境自动覆盖
+.platform-h5 .component {
+  font-size: @font-size-h5-lg !important;  // 18px
+  padding: @spacing-h5-lg !important;      // 12px
+}
+```
+
+### 样式变量规范
+```less
+// src/styles/variables.less
+// 小程序变量
+@font-size-lg: 32px;
+@spacing-lg: 20px;
+
+// H5专用变量（40%-60%缩放）
+@font-size-h5-lg: 18px;
+@spacing-h5-lg: 12px;
+```
+
+### 响应式设计
+```less
+// 移动端优化
+@media (max-width: 480px) {
+  .component { font-size: 14px !important; }
+}
+
+// 桌面端居中
+@media (min-width: 768px) {
+  .page {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+}
+```
+
+### 平台特定代码
+```tsx
+// 组件中添加平台类名
+<View className={`component ${PlatformUtils.getPlatformClass()}`}>
+
+// 条件渲染
+{PlatformUtils.isH5() && <H5OnlyComponent />}
+{PlatformUtils.isMiniProgram() && <MiniProgramComponent />}
+
+// 文件后缀方式
+// Button.tsx          // 通用实现
+// Button.weapp.tsx     // 小程序专用
+// Button.h5.tsx        // H5 专用
+```
+
+## 性能优化规范
+
+### 代码分割
+```typescript
+import { lazy } from 'react'
+
+// 路由懒加载
+const HomePage = lazy(() => import('../pages/home'))
+const UserPage = lazy(() => import('../pages/user'))
+```
+
+### 列表优化
+```tsx
+import { VirtualList } from '@tarojs/components'
+
+// 长列表虚拟滚动
+<VirtualList
+  height={500}
+  itemData={listData}
+  itemCount={listData.length}
+  itemSize={100}
+>
+  {({ index, data }) => <ListItem data={data[index]} />}
+</VirtualList>
+```
+
+## 错误处理规范
+
+### 全局错误边界
+```tsx
+import { Component, ReactNode } from 'react'
+import { View, Text } from '@tarojs/components'
+
+interface State {
+  hasError: boolean
+}
+
+class ErrorBoundary extends Component<{ children: ReactNode }, State> {
+  constructor(props) {
+    super(props)
+    this.state = { hasError: false }
+  }
+
+  static getDerivedStateFromError(): State {
+    return { hasError: true }
+  }
+
+  componentDidCatch(error: Error, errorInfo: any) {
+    console.error('ErrorBoundary caught an error:', error, errorInfo)
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <View className="error-boundary">
+          <Text>出现了一些问题，请稍后重试</Text>
+        </View>
+      )
+    }
+
+    return this.props.children
+  }
+}
+```
+
+## 配置管理规范
+
+### 环境配置
+```typescript
+// config/index.ts
+interface Config {
+  API_BASE_URL: string
+  APP_NAME: string
+  VERSION: string
+}
+
+const development: Config = {
+  API_BASE_URL: 'https://dev-api.example.com',
+  APP_NAME: 'Pupuya Dev',
+  VERSION: '1.0.0'
+}
+
+const production: Config = {
+  API_BASE_URL: 'https://api.example.com',
+  APP_NAME: 'Pupuya',
+  VERSION: '1.0.0'
+}
+
+export default process.env.NODE_ENV === 'development' ? development : production
+```
+
+## 测试规范
+
+### 单元测试
+```typescript
+// __tests__/components/UserCard.test.tsx
+import { render } from '@testing-library/react'
+import UserCard from '../UserCard'
+
+describe('UserCard', () => {
+  it('renders correctly', () => {
+    const { getByText } = render(
+      <UserCard title="Test User" subtitle="Test Subtitle" />
+    )
+    
+    expect(getByText('Test User')).toBeTruthy()
+    expect(getByText('Test Subtitle')).toBeTruthy()
+  })
+})
+```
+
+## 构建部署规范
+
+### 构建配置
+```typescript
+// config/index.ts (Taro 配置)
+export default {
+  projectName: 'pupuya-client',
+  date: '2024-1-1',
+  designWidth: 750,
+  deviceRatio: {
+    640: 2.34 / 2,
+    750: 1,
+    828: 1.81 / 2
+  },
+  sourceRoot: 'src',
+  outputRoot: 'dist',
+  plugins: [],
+  defineConstants: {},
+  copy: {
+    patterns: [],
+    options: {}
+  },
+  framework: 'react',
+  compiler: 'webpack5',
+  mini: {
+    postcss: {
+      pxtransform: {
+        enable: true,
+        config: {}
+      }
+    }
+  },
+  h5: {
+    publicPath: '/',
+    staticDirectory: 'static',
+    postcss: {
+      autoprefixer: {
+        enable: true
+      }
+    }
+  }
+}
+```
+
+这些规范涵盖了 Taro 框架开发的各个方面，确保代码质量、可维护性和跨端兼容性。你可以根据项目的具体需求进行调整和补充。

@@ -31,10 +31,11 @@ export class MockApiService {
     page?: number
     pageSize?: number
     tab?: 'follow' | 'discover'
+    tags?: string[]
   } = {}): Promise<{ code: number; message: string; data: PaginatedResponse<ContentItem> }> {
     await delay(800) // 模拟网络延迟
     
-    const { page = 1, pageSize = 20, tab = 'discover' } = params
+    const { page = 1, pageSize = 20, tab = 'discover', tags = [] } = params
     
     // 根据tab类型返回不同数据
     let allItems: ContentItem[]
@@ -44,6 +45,13 @@ export class MockApiService {
     } else {
       // 发现页，生成更多随机数据
       allItems = [...(MOCK_CONTENT_LIST || []), ...(generateMockContentList(50) || [])]
+    }
+    
+    // 根据tags筛选内容
+    if (tags && tags.length > 0) {
+      allItems = allItems.filter(item => 
+        item.tags && item.tags.some(tag => tags.includes(tag))
+      )
     }
     
     // 分页逻辑

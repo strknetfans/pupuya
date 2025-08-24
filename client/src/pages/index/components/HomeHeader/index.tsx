@@ -1,6 +1,5 @@
 import React, { FC, memo, useState } from 'react'
 import { View, Text } from '@tarojs/components'
-import { Button } from '@nutui/nutui-react-taro'
 import './index.less'
 
 interface HomeHeaderProps {
@@ -28,7 +27,7 @@ const HomeHeader: FC<HomeHeaderProps> = memo(({
           className="home-header__settings"
           onClick={onSettingsClick}
         >
-          <Text className="home-header__settings-icon">⚙️</Text>
+          <Text className="home-header__settings-icon">☰</Text>
         </View>
         
         <View className="home-header__tabs">

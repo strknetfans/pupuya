@@ -26,11 +26,9 @@ const TabBar: FC<TabBarProps> = memo(({ activeTab, onTabChange }) => {
     <View className="tab-bar">
       <View 
         className={`tab-bar__item ${activeTab === 'home' ? 'tab-bar__item--active' : ''}`}
-        onClick={() => handleTabClick('home')}
+        onClick={() => onTabChange('home')}
       >
-        <Text className="tab-bar__icon">
-          {activeTab === 'home' ? '🏠' : '🏘️'}
-        </Text>
+        <Text className="tab-bar__icon">🏠</Text>
         <Text className="tab-bar__text">首页</Text>
       </View>
       
@@ -42,7 +40,7 @@ const TabBar: FC<TabBarProps> = memo(({ activeTab, onTabChange }) => {
       
       <View 
         className={`tab-bar__item ${activeTab === 'profile' ? 'tab-bar__item--active' : ''}`}
-        onClick={() => handleTabClick('profile')}
+        onClick={() => onTabChange('profile')}
       >
         <Text className="tab-bar__icon">👤</Text>
         <Text className="tab-bar__text">我的</Text>

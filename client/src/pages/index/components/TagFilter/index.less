@@ -1,0 +1,105 @@
+@import '../../../../styles/variables.less';
+
+.tag-filter {
+  padding: @spacing-md @spacing-lg;
+  background: @background-color-white;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  margin-bottom: @spacing-md;
+
+  &__scroll {
+    width: 100%;
+    white-space: nowrap;
+  }
+
+  &__container {
+    display: flex;
+    gap: @spacing-sm;
+    padding: @spacing-xs 0;
+    min-width: max-content;
+  }
+
+  &__tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: @spacing-sm @spacing-md;
+    background: @background-color;
+    border: 1px solid @border-color;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all @duration-base;
+    flex-shrink: 0;
+    min-width: 60px;
+    text-align: center;
+
+    &:hover {
+      background: darken(@background-color, 3%);
+      border-color: darken(@border-color, 10%);
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    &--selected {
+      background: @primary-color;
+      border-color: @primary-color;
+      color: @background-color-white;
+      box-shadow: 0 2px 8px fade(@primary-color, 30%);
+
+      &:hover {
+        background: darken(@primary-color, 5%);
+        border-color: darken(@primary-color, 5%);
+      }
+    }
+  }
+
+  &__tag-text {
+    font-size: @font-size-sm;
+    font-weight: 500;
+    color: inherit;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  // H5 平台适配
+  .platform-h5 & {
+    padding: 8px 12px !important;
+    margin-bottom: 8px !important;
+
+    &__container {
+      gap: 8px !important;
+      padding: 4px 0 !important;
+    }
+
+    &__tag {
+      padding: 6px 12px !important;
+      min-width: 50px !important;
+      border-radius: 16px !important;
+    }
+
+    &__tag-text {
+      font-size: 12px !important;
+    }
+  }
+
+  // 移动端优化
+  @media (max-width: 480px) {
+    .platform-h5 & {
+      &__container {
+        gap: 6px !important;
+      }
+
+      &__tag {
+        padding: 4px 10px !important;
+        min-width: 45px !important;
+      }
+
+      &__tag-text {
+        font-size: 11px !important;
+      }
+    }
+  }
+}

@@ -72,3 +72,11 @@ export interface FollowUserParams {
   pageSize?: number
   keyword?: string
 }
+
+// 内容列表参数
+export interface ContentListParams {
+  page?: number
+  pageSize?: number
+  tab?: TabType
+  tags?: string[]
+}

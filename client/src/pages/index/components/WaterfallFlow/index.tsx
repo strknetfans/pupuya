@@ -100,48 +100,55 @@ const WaterfallCard: FC<WaterfallCardProps> = memo(({ item, onClick }) => {
   const titleMaxLength = isH5 ? 16 : 20
   const descriptionMaxLength = isH5 ? 45 : 60
   
+  // 默认图片
+  const defaultImage = 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=600&fit=crop'
+  
   return (
     <View className="waterfall-card" onClick={onClick}>
+      {/* 图片容器 - 铺满整个卡片 */}
       <View className="waterfall-card__image-container">
         <Image 
           className="waterfall-card__image"
-          src={item.imageUrl}
-          mode="aspectFill"
+          src={item.imageUrl || defaultImage}
+          lazyLoad
+          onError={() => {
+            // 图片加载失败时使用默认图片
+            console.warn(`图片加载失败: ${item.imageUrl}`)
+          }}
         />
-      </View>
-      
-      <View className="waterfall-card__content">
-        <Text className="waterfall-card__title">
-          {formatTitle(item.title, titleMaxLength)}
-        </Text>
-        <Text className="waterfall-card__description">
-          {formatDescription(item.description, descriptionMaxLength)}
-        </Text>
         
-        <View className="waterfall-card__footer">
-          <View className="waterfall-card__user">
-            <Image 
-              className="waterfall-card__avatar"
-              src={item.user.avatar}
-              mode="aspectFill"
-            />
-            <Text className="waterfall-card__username">
-              {formatUsername(item.user.name, usernameMaxLength)}
-            </Text>
-          </View>
+        {/* 渐变遮罩层，确保文字可读性 */}
+        <View className="waterfall-card__overlay" />
+        
+        {/* 内容信息 - 覆盖在图片底部 */}
+        <View className="waterfall-card__content">
+          <Text className="waterfall-card__title">
+            {formatTitle(item.title, titleMaxLength)}
+          </Text>
+          <Text className="waterfall-card__description">
+            {formatDescription(item.description, descriptionMaxLength)}
+          </Text>
           
-          <View className="waterfall-card__stats">
-            <View className="waterfall-card__stat">
-              <Text className="waterfall-card__stat-icon">❤️</Text>
-              <Text className="waterfall-card__stat-count">
-                {formatNumber(item.likes)}
+          <View className="waterfall-card__footer">
+            <View className="waterfall-card__user">
+              <Image 
+                className="waterfall-card__avatar"
+                src={item.user.avatar}
+                mode="aspectFill"
+                lazyLoad
+              />
+              <Text className="waterfall-card__username">
+                {item.user.name}
               </Text>
             </View>
-            <View className="waterfall-card__stat">
-              <Text className="waterfall-card__stat-icon">💬</Text>
-              <Text className="waterfall-card__stat-count">
-                {formatNumber(item.comments)}
-              </Text>
+            
+            <View className="waterfall-card__stats">
+              <View className="waterfall-card__stat">
+                <Text className="waterfall-card__stat-icon">❤️</Text>
+                <Text className="waterfall-card__stat-count">
+                  {formatNumber(item.likes)}
+                </Text>
+              </View>
             </View>
           </View>
         </View>

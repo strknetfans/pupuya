@@ -1,0 +1,315 @@
+---
+description: 动态内容文本处理规范，解决文本超长、溢出、截断等问题
+globs:
+  - "client/**/*.ts"
+  - "client/**/*.tsx"
+  - "client/**/*.less"
+  - "client/**/*.scss"
+alwaysApply: true
+tags:
+  - "text"
+  - "ui"
+  - "responsive"
+  - "user-experience"
+priority: 85
+language: "typescript"
+framework: "taro"
+---
+
+# 文本处理与显示规范
+
+> 确保动态内容在不同平台和设备上的最佳显示效果
+
+## 📋 核心原则
+
+### 设计理念
+- **用户体验优先**：确保文本在所有设备上清晰可读
+- **平台适配**：针对H5和小程序提供不同的显示策略
+- **性能考虑**：避免文本渲染导致的布局抖动
+- **内容完整性**：在截断的同时保持信息的完整性
+
+### 处理优先级
+1. **防止布局破坏**：文本超长不能影响整体布局
+2. **保持信息可读**：截断后的文本仍需传达核心信息
+3. **平台一致性**：相同内容在不同平台的显示逻辑一致
+4. **交互友好**：提供查看完整内容的方式
+
+## 🛠️ 技术实现
+
+### 文本处理工具函数
+```typescript
+// src/utils/textUtils.ts
+
+/**
+ * 智能文本截断（考虑中英文字符宽度）
+ * @param text 原始文本
+ * @param maxWidth 最大显示宽度
+ * @param ellipsis 省略号
+ */
+export function truncateTextByWidth(
+  text: string, 
+  maxWidth: number, 
+  ellipsis: string = '...'
+): string {
+  // 中文字符按2个字符宽度计算
+  // 英文数字按1个字符宽度计算
+}
+
+/**
+ * 平台自适应文本处理
+ */
+export function formatUsername(name: string, maxLength?: number): string
+export function formatTitle(title: string, maxLength?: number): string
+export function formatDescription(desc: string, maxLength?: number): string
+export function formatNumber(num: number): string // 1k, 1w 格式化
+```
+
+### 平台差异化配置
+```typescript
+// 文本长度限制配置
+export const TEXT_CONFIG = {
+  // 小程序环境
+  USERNAME_MAX_LENGTH: 6,      // 用户名：6个字符宽度
+  TITLE_MAX_LENGTH: 20,        // 标题：20个字符宽度
+  DESCRIPTION_MAX_LENGTH: 60,  // 描述：60个字符宽度
+  
+  // H5环境（更紧凑）
+  H5_USERNAME_MAX_LENGTH: 4,   // 用户名：4个字符宽度
+  H5_TITLE_MAX_LENGTH: 16,     // 标题：16个字符宽度
+  H5_DESCRIPTION_MAX_LENGTH: 45 // 描述：45个字符宽度
+} as const
+```
+
+## 🎨 CSS样式规范
+
+### 基础文本溢出样式
+```less
+// 单行文本省略
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+// 多行文本省略
+.text-multiline-ellipsis(@lines: 2) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: @lines;
+  overflow: hidden;
+  word-break: break-word;
+  hyphens: auto;
+  line-height: 1.4;
+}
+
+// 中英文混排优化
+.text-mixed-content {
+  word-break: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+  text-rendering: optimizeLegibility;
+}
+```
+
+### 组件级别的文本处理
+```less
+// 用户名显示
+.username {
+  .text-ellipsis();
+  max-width: 120px; // 小程序
+  font-weight: 500;
+  
+  .platform-h5 & {
+    max-width: 80px !important; // H5更紧凑
+    font-size: 13px !important;
+  }
+}
+
+// 卡片标题
+.card-title {
+  .text-multiline-ellipsis(2);
+  font-size: 32px;
+  line-height: 1.4;
+  margin-bottom: 12px;
+  
+  .platform-h5 & {
+    font-size: 16px !important;
+    margin-bottom: 6px !important;
+  }
+}
+
+// 卡片描述
+.card-description {
+  .text-multiline-ellipsis(3);
+  font-size: 28px;
+  line-height: 1.5;
+  color: @text-color-light;
+  
+  .platform-h5 & {
+    font-size: 14px !important;
+  }
+}
+```
+
+## 📱 组件使用规范
+
+### React组件中的文本处理
+```tsx
+import { formatUsername, formatTitle, formatDescription, formatNumber } from '@/utils/textUtils'
+import PlatformUtils from '@/utils/platform'
+
+const UserCard: FC<Props> = ({ user, content }) => {
+  const isH5 = PlatformUtils.isH5()
+  
+  // 根据平台动态调整文本长度
+  const displayName = formatUsername(
+    user.name, 
+    isH5 ? TEXT_CONFIG.H5_USERNAME_MAX_LENGTH : TEXT_CONFIG.USERNAME_MAX_LENGTH
+  )
+  
+  const displayTitle = formatTitle(
+    content.title,
+    isH5 ? TEXT_CONFIG.H5_TITLE_MAX_LENGTH : TEXT_CONFIG.TITLE_MAX_LENGTH
+  )
+  
+  return (
+    <View className="user-card">
+      <Text className="username">{displayName}</Text>
+      <Text className="card-title">{displayTitle}</Text>
+      <Text className="card-description">
+        {formatDescription(content.description)}
+      </Text>
+      <Text className="stat-count">
+        {formatNumber(content.likes)} 赞
+      </Text>
+    </View>
+  )
+}
+```
+
+### 动态内容处理策略
+```tsx
+// 长文本内容的处理
+const LongContentCard: FC<Props> = ({ content }) => {
+  const [expanded, setExpanded] = useState(false)
+  const isH5 = PlatformUtils.isH5()
+  
+  const maxLength = isH5 ? 45 : 60
+  const needsTruncation = getTextWidth(content) > maxLength
+  
+  const displayContent = expanded 
+    ? content 
+    : formatDescription(content, maxLength)
+  
+  return (
+    <View>
+      <Text className="content">{displayContent}</Text>
+      {needsTruncation && (
+        <Text 
+          className="expand-btn" 
+          onClick={() => setExpanded(!expanded)}
+        >
+          {expanded ? '收起' : '展开'}
+        </Text>
+      )}
+    </View>
+  )
+}
+```
+
+## 📊 数字格式化规范
+
+### 数字显示优化
+```typescript
+/**
+ * 数字格式化规则：
+ * < 1,000: 显示原数字 (999)
+ * < 10,000: 显示小数点 (9.9k)
+ * < 100,000: 显示整数k (99k)
+ * >= 100,000: 显示w (10w)
+ */
+export function formatNumber(num: number): string {
+  if (num < 1000) return num.toString()
+  if (num < 10000) return (num / 1000).toFixed(1) + 'k'
+  if (num < 100000) return Math.floor(num / 1000) + 'k'
+  return Math.floor(num / 10000) + 'w'
+}
+
+// 使用示例
+const likes = 1234 // 显示为 "1.2k"
+const views = 15678 // 显示为 "16k"
+const followers = 123456 // 显示为 "12w"
+```
+
+## 🔧 开发最佳实践
+
+### 文本处理检查清单
+- [ ] 所有用户输入的文本都进行了长度检查
+- [ ] 提供了平台特定的文本长度限制
+- [ ] 使用了统一的文本处理工具函数
+- [ ] 考虑了中英文混排的显示效果
+- [ ] 测试了极端长度的文本内容
+- [ ] 确保截断不会破坏语义完整性
+
+### 性能优化建议
+```typescript
+// 使用 useMemo 缓存格式化结果
+const displayTitle = useMemo(
+  () => formatTitle(title, isH5 ? 16 : 20),
+  [title, isH5]
+)
+
+// 避免在渲染中进行复杂文本处理
+const processedContent = useMemo(
+  () => ({
+    username: formatUsername(user.name),
+    title: formatTitle(content.title),
+    description: formatDescription(content.description)
+  }),
+  [user.name, content.title, content.description]
+)
+```
+
+### 测试覆盖要求
+```typescript
+// 文本处理函数必须包含的测试用例
+describe('formatUsername', () => {
+  it('should handle Chinese characters correctly', () => {
+    expect(formatUsername('测试用户名', 4)).toBe('测试...')
+  })
+  
+  it('should handle mixed Chinese and English', () => {
+    expect(formatUsername('User用户', 6)).toBe('User用...')
+  })
+  
+  it('should handle long English names', () => {
+    expect(formatUsername('VeryLongUsername', 8)).toBe('VeryLo...')
+  })
+})
+```
+
+## ⚠️ 常见问题与解决方案
+
+### 1. 文本截断位置不当
+**问题**：在单词或字符中间截断，影响可读性
+**解决**：使用智能截断，优先在空格、标点处截断
+
+### 2. 中英文混排显示不一致
+**问题**：中文字符和英文字符宽度计算不准确
+**解决**：使用字符宽度计算，中文按2倍宽度处理
+
+### 3. 不同平台显示差异大
+**问题**：同样的文本在H5和小程序显示效果不同
+**解决**：建立平台特定的显示配置和样式
+
+### 4. 数字显示不够直观
+**问题**：大数字显示占用过多空间
+**解决**：使用k、w等单位简化显示
+
+### 5. 布局被长文本撑破
+**问题**：未处理的长文本导致布局混乱
+**解决**：强制使用CSS文本溢出处理
+
+---
+*这套文本处理规范确保了动态内容在各种场景下的最佳显示效果*

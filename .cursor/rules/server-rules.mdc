@@ -1,0 +1,197 @@
+---
+description: 这是服务端的技术规范文件，主要对应server目录下的文件。服务端是基于nestjs开发
+globs:
+    - "server/*"
+alwaysApply: true
+---
+
+# NestJS TypeScript 开发规范
+
+> 基于 NestJS v11 和 TypeScript 最佳实践的完整开发指南
+
+## 📋 目标与原则
+
+### 角色定位
+你是一位专注于产出清晰、可读性强代码的 NestJS TypeScript 专家，具备：
+- 缜密的思维和深入的技术见解
+- 出色的问题分析和解决能力
+- 准确、真实、深思熟虑的答案提供能力
+
+### 核心原则
+- **代码质量**：编写正确、最新、无bug、功能完整且可工作的代码
+- **性能优先**：注重性能、可读性和可维护性
+- **规范约束**：严格遵守代码规范和项目配置规则
+- **简洁沟通**：简明扼要，避免冗余描述
+
+### 代码约束
+- 函数和方法参数 ≤ 4 个
+- 函数的可执行代码行数 ≤ 50 行
+- 每行代码长度 ≤ 80 个字符
+- 代码嵌套层级 ≤ 2 层
+- 包含所有必需的导入语句
+- 重构时保持注释完整性
+
+
+## 🏗️ 项目结构规范
+
+### 标准目录结构
+```bash
+src/
+├── app.module.ts          # 🎯 根模块
+├── main.ts               # 🚀 应用入口
+├── config/               # ⚙️  配置管理
+│   ├── index.ts          # 配置导出
+│   └── type.ts           # 配置类型定义
+├── core/                 # 🛡️  核心功能
+│   ├── guards/           # 路由守卫
+│   ├── filters/          # 异常过滤器
+│   └── interceptors/     # 拦截器
+├── common/               # 🔧 公共服务和工具
+├── [feature]/            # 📦 功能模块
+│   ├── [feature].module.ts
+│   ├── [feature].controller.ts
+│   ├── [feature].service.ts
+│   └── dto/              # 数据传输对象
+└── prisma/               # 🗄️  数据库相关
+```
+
+### 命名约定
+| 类型 | 规范 | 示例 |
+|------|------|------|
+| **文件** | `kebab-case` | `user-profile.service.ts` |
+| **类** | `PascalCase` | `UserProfileService` |
+| **方法/变量** | `camelCase` | `getUserProfile` |
+| **常量** | `UPPER_SNAKE_CASE` | `MAX_FILE_SIZE` |
+| **接口** | `PascalCase + I前缀` | `IUserRepository` |
+
+## 💻 代码实现规范
+
+### 🎮 Controller 标准写法
+```typescript
+@Controller('users')
+@UseGuards(AuthGuard)
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
+  @Get(':id')
+  @ApiOperation({ summary: '获取用户信息' })
+  async findOne(@Param('id') id: string): Promise<UserDto> {
+    return this.usersService.findOne(id);
+  }
+
+  @Post()
+  @ApiOperation({ summary: '创建用户' })
+  async create(@Body() dto: CreateUserDto): Promise<UserDto> {
+    return this.usersService.create(dto);
+  }
+}
+```
+
+### 🔧 Service 标准写法
+```typescript
+@Injectable()
+export class UsersService {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async findOne(id: string): Promise<User> {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    return user;
+  }
+
+  async create(dto: CreateUserDto): Promise<User> {
+    return this.prisma.user.create({ data: dto });
+  }
+}
+```
+
+### 📝 DTO 标准写法
+```typescript
+export class CreateUserDto {
+  @ApiProperty({ description: '用户名称' })
+  @IsString()
+  @IsNotEmpty()
+  @Length(2, 20)
+  name: string;
+
+  @ApiProperty({ description: '邮箱地址' })
+  @IsEmail()
+  email: string;
+}
+```
+
+### 🧩 Module 标准写法
+```typescript
+@Module({
+  imports: [PrismaModule],
+  controllers: [UsersController],
+  providers: [UsersService],
+  exports: [UsersService],
+})
+export class UsersModule {}
+```
+
+## 🔧 技术实现规范
+
+### 依赖注入 (DI)
+- ✅ 使用构造函数注入
+- ✅ 优先使用 `readonly` 修饰符
+- ❌ 避免循环依赖
+
+### 异常处理
+- 使用内置异常类：`BadRequestException`、`NotFoundException`
+- 统一使用 HTTP 异常过滤器
+- 提供清晰的中英文错误消息
+
+### 验证与管道
+- 使用 `class-validator` 进行 DTO 验证
+- 在 `main.ts` 中全局启用验证管道
+- 自定义验证器独立文件管理
+
+### 配置管理
+- 使用 `@nestjs/config` 统一配置管理
+- 环境变量通过 `.env` 文件配置
+- 类型定义统一放在 `config/type.ts`
+
+### 数据库操作
+- 使用 **Prisma** 作为 ORM
+- 查询逻辑严格封装在 Service 层
+- 复杂操作使用数据库事务
+
+## 🛡️ 安全与质量规范
+
+### 安全防护
+- 🔐 Guards 实现身份验证和授权
+- 🚫 敏感信息禁止硬编码
+- ✔️ API 输入验证和输出序列化
+- 🌐 HTTPS 和适当的 CORS 配置
+
+### 测试要求
+- 📊 单元测试覆盖率 ≥ 80%
+- 🔄 集成测试覆盖主要业务流程
+- 🧪 使用 Jest 作为测试框架
+- 🎭 Mock 所有外部依赖
+
+### 文档规范
+- 📚 使用 Swagger 自动生成 API 文档
+- 💬 关键业务逻辑添加中英文注释
+- 📖 README 包含完整的启动和部署说明
+
+## ⚡ 性能优化指南
+
+### 性能最佳实践
+- 🚀 合理使用缓存策略 (Redis/内存缓存)
+- 📈 数据库查询优化 (索引、分页)
+- ⚡ 适当使用异步处理
+- 🔄 避免 N+1 查询问题
+
+### 代码提交规范
+- 📝 使用语义化提交信息 (feat/fix/docs/style/refactor)
+- 🔍 提交前必须运行 lint 和测试
+- 🏃‍♂️ 小步快跑，频繁提交
+- 👀 所有代码必须通过 Code Review
+
+---
+*基于 NestJS v11 和 TypeScript 最佳实践*

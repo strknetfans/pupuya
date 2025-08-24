@@ -10,6 +10,7 @@ import FollowManagement from './components/FollowManagement'
 import TabBar from '../../components/TabBar'
 import SettingsPopup from '../../components/SettingsPopup'
 import FollowsList from '../../components/FollowsList'
+import TagFilter from './components/TagFilter'
 import { ContentItem, TabType, PageState } from '../../types'
 import { ContentService } from '../../services/contentService'
 import { USE_MOCK, DEBUG } from '../../config/env'
@@ -36,6 +37,12 @@ function Index() {
   
   // 关注管理相关状态
   const [followManagementVisible, setFollowManagementVisible] = useState(false)
+
+  // Tag筛选相关状态
+  const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const [availableTags, setAvailableTags] = useState<string[]>([
+    '推荐', '动漫', '娱乐', '影视', '游戏', '摄影', '美食', '旅行', '艺术', '手工'
+  ])
 
   useLoad(() => {
     console.log('首页加载')
@@ -65,13 +72,14 @@ function Index() {
     
     try {
       if (DEBUG) {
-        console.log(`加载内容 - Tab: ${activeTab}, Page: ${currentPage}, Mock: ${USE_MOCK}`)
+        console.log(`加载内容 - Tab: ${activeTab}, Page: ${currentPage}, Tags: ${selectedTags.join(',')}, Mock: ${USE_MOCK}`)
       }
       
       const response = await ContentService.getContentList({
         page: currentPage,
         pageSize: pagination.pageSize,
-        tab: activeTab
+        tab: activeTab,
+        tags: selectedTags.length > 0 ? selectedTags : undefined
       })
       
       if (response.code === 200) {
@@ -139,11 +147,20 @@ function Index() {
 
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab)
-    // 切换tab时重置数据并重新加载
+    // 切换tab时重置分页、内容和选中的tags
+    setContentItems([])
+    setSelectedTags([])
+    setPagination({ page: 1, pageSize: 20, hasMore: true })
+    loadContent(true)
+  }
+
+  // 处理tag变化
+  const handleTagChange = (tags: string[]) => {
+    setSelectedTags(tags)
+    // tag变化时重新加载内容
     setContentItems([])
     setPagination({ page: 1, pageSize: 20, hasMore: true })
-    
-    // 使用 useEffect 来监听 activeTab 变化
+    loadContent(true)
   }
 
   // 监听 activeTab 变化，重新加载数据
@@ -189,9 +206,19 @@ function Index() {
   }
 
   const handleSearchClick = () => {
-    Taro.showToast({
-      title: '搜索功能',
-      icon: 'none'
+    console.log('搜索按钮被点击')
+    Taro.navigateTo({
+      url: '../search/index',
+      success: (res) => {
+        console.log('跳转成功:', res)
+      },
+      fail: (error) => {
+        console.error('跳转失败:', error)
+        Taro.showToast({
+          title: '跳转失败',
+          icon: 'error'
+        })
+      }
     })
   }
 
@@ -239,6 +266,15 @@ function Index() {
         {activeTab === 'follow' && (
           <FollowsList
             onFollowChange={handleFollowsListChange}
+          />
+        )}
+        
+        {/* Tag筛选 - 仅在发现tab下显示 */}
+        {activeTab === 'discover' && (
+          <TagFilter
+            tags={availableTags}
+            selectedTags={selectedTags}
+            onTagChange={handleTagChange}
           />
         )}
         
